@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Tracker</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: rgba(255, 214, 144, 0.45);
+        }
+        .options {
+            width: 80%; /* 60% for the left side (coffee options) */
+        }
+        .recent-coffees {
+            font-size: 0.8em;
+            width: 20%; /* 30% for the right side (recent list) */
+            border-left: 2px solid #ddd;
+            padding-left: 20px;
+        }
+        .button {
+            display: inline-block; /* For two buttons side by side */
+            width: 48%; /* Adjust to fit side by side */
+            padding: 20px;
+            margin: 5px;
+            font-size: 34px;
+            cursor: pointer;
+            text-align: center;
+            background-color: #dddddd; /* Default button color */
+            color: rgb(0, 0, 0);
+            border: none;
+            border-radius: 5px;
+        }
+        .button.selected {
+            background-color: #f39e0079; /* Dark green when selected */
+        }
+        .button.full-width {
+            width: 98%; /* Full width for 'Enter' button */
+            margin: 10px 0;
+        }
+        .controls {
+            margin-top: 30px;
+        }
+        h2 {
+            margin-top: 30px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        /* General styling for the coffee list items */
+        #coffeeList li {
+            margin: 15px 0;
+            padding: 5px;
+            font-size: 1.7vw;
+            line-height: 1.5;
+            border-radius: 10px;
+            background-color: rgba(255, 202, 111, 0.26);
+        }
+
+        /* Styling for the container holding coffee, milk, and syrup */
+        #coffeeList div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px; /* Space below the coffee details */
+        }
+
+        /* Styling for individual details within the container */
+        #coffeeList span:not(.time) {
+            display: inline; /* Keep all details on the same line */
+            margin-left: 3px; /* Space between details */
+        }
+        
+        .copyright {
+            font-size: 0.69em;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 0px;
+            margin-top: -60px;
+        }
+
+        .amazon-logo {
+            max-width: 130px;
+            margin-bottom: -50px;
+        }
+        .coffee-logo {
+            max-width: 50px;
+            margin-bottom: 0px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin: 0;
+        }
+
+        .header h3 {
+            font-size: 15px;
+            color: #555;
+            margin-top: 0;
+        }
+        .options, .recent-coffees {
+            margin-top: 20px;
+        }
+        #weather-info {
+            font-size: 22px;
+            color: rgba(0, 0, 0, 0.5);
+        }
+        #conversionRate {
+            margin-top: -20px;
+            font-size: 22px;
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        .api_info {
+            position: absolute;
+            margin-top: -45px;
+            margin-left: -15px;
+            font-size: 1px;
+        }
+
+        .coffeetime {
+            position: absolute;
+            margin-top: 15%;
+            margin-left: -10%;
+            width: 1000px;
+            height: auto;
+            visibility: hidden;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="api_info">
+        <p id="weather-info">Loading weather...</p>
+        <div id="conversionRate">Fetching conversion rate...</div><div id="trendSymbol"></div>
+        
+    </div>
+    
+
+    <div class="options">
+        <div class="header">
+            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.signsallsigns.com%2Fwp-content%2Fuploads%2F2019%2F03%2Famazon-logo-transparent.png&f=1&nofb=1&ipt=f3ed8ce4ad037f34a2f8ae294bd969c132d728d4ceaa97c47a38131038090b66&ipo=images" alt="Amazon Logo" class="amazon-logo">
+            <img src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.pngmart.com%2Ffiles%2F1%2FCoffee-Logo-PNG-Image.png&f=1&nofb=1&ipt=060cedd1d0d1ea28beaf8997e0af5e13c0c676ae5f14187fe35603355c650535&ipo=images" alt="Amazon Logo" class="coffee-logo">
+            <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.tenor.co%2Fimages%2F943f2f95e1d8312e86527401ffa303ed%2Fraw&f=1&nofb=1&ipt=3cabfcee519350db25d95dca616c561e73ba3600e31bd596fd67030832bf59b3&ipo=images" alt="" srcset="" class="coffeetime">
+            <h3>DUB19 Coffee Tracker</h3>
+        </div>
+        <h2>Select Coffee Type</h2>
+            <button class="button coffee" onclick="selectOption('Americano', 'coffee', this)">Americano</button>
+            <button class="button coffee" onclick="selectOption('Small Americano', 'coffee', this)">Small Americano</button>
+            <button class="button coffee" onclick="selectOption('Latte', 'coffee', this)">Latte</button>
+            <button class="button coffee" onclick="selectOption('Cappuccino', 'coffee', this)">Cappuccino</button>
+            <button class="button coffee" onclick="selectOption('Flat White', 'coffee', this)">Flat White</button>
+            <button class="button coffee" onclick="selectOption('Double Espresso', 'coffee', this)">Double Espresso</button>
+            <button class="button coffee" onclick="selectOption('Single Espresso', 'coffee', this)">Single Espresso</button>
+            <button class="button coffee" onclick="selectOption('Matcha Latte', 'coffee', this)">Matcha Latte</button>
+            <button class="button coffee" onclick="selectOption('Chai Latte', 'coffee', this)">Chai Latte</button>
+            <button class="button coffee" onclick="selectOption('Hot Chocolate', 'coffee', this)">Hot Chocolate</button>
+            <button class="button coffee" onclick="selectOption('Mocha', 'coffee', this)">Mocha</button>
+            <button class="button coffee" onclick="selectOption('Tea', 'coffee', this)">Tea</button>
+            <button class="button coffee" onclick="selectOption('Iced Latte', 'coffee', this)">Iced Latte</button>
+            <button class="button coffee" onclick="selectOption('Iced Americano', 'coffee', this)">Iced Americano</button>
+            <button class="button coffee" onclick="selectOption('Vietnamese', 'coffee', this)">Vietnamese</button>
+            <button class="button coffee" onclick="selectOption('Pumpkin Spiced Latte', 'coffee', this)">Pumpkin Spiced Latte</button>
+
+        <h2>Select Milk Type (Optional)</h2>
+        <button class="button milk" onclick="selectOption('Oat Milk', 'milk', this)">Oat Milk</button>
+        <button class="button milk" onclick="selectOption('Coconut Milk', 'milk', this)">Coconut Milk</button>
+	    <button class="button milk" onclick="selectOption('Almond Milk', 'milk', this)">Almond Milk</button>
+        <!-- Add other milk buttons similarly -->
+        <h2>Select Syrup (Optional)</h2>
+        <button class="button syrup" onclick="selectOption('Caramel', 'syrup', this)">Caramel</button>
+        <button class="button syrup" onclick="selectOption('Hazelnut', 'syrup', this)">Hazelnut</button>
+	    <button class="button syrup" onclick="selectOption('Vanilla', 'syrup', this)">Vanilla</button>
+        <!-- Add other syrup buttons similarly -->
+        <h2>Select Extras (Optional)</h2>
+        <button class="button extra" onclick="selectOption('Extra Shot', 'extra', this)">Extra Shot</button>
+       
+        <div class="controls">
+            <button class="button full-width" onclick="exportData()">Export Data</button>
+            <button class="button full-width" onclick="confirmResetDay()">Reset Day</button>
+        </div>
+        <p class="copyright">&copy; 2024 Luiz Smania (@luizsmania). All rights reserved.<br>This website is for personal use only and may not be used for commercial purposes, sales, or redistribution without explicit permission.</p>
+    </div>
+    
+    <div class="recent-coffees">
+        <button class="button full-width" onclick="addCoffee()">Enter</button>
+        <h2 id="coffeeCount">Recent Coffees - Total: 0</h2>
+        <ul id="coffeeList"></ul>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        const apiKey = 'YOUR_API_KEY'; // Replace with your OpenWeatherMap API key
+        const city = 'Dublin';
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=Dublin&appid=604b3b10dc1bd50d0c79ac19718d5c7e&units=metric`;
+    
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const weatherDescription = data.weather[0].description;
+                const temperature = data.main.temp;
+                const currentTime = new Date();
+    
+                // Get the day of the week and format date as DD/MM/YYYY
+                const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
+                const today = currentTime.toLocaleDateString('en-GB', options); // e.g., "Wednesday, 16/10/2024"
+    
+                const greeting = currentTime.getHours() < 12 ? "Good Morning!" : 
+                                 currentTime.getHours() < 18 ? "Good Afternoon!" : 
+                                 "Good Evening!";
+    
+                document.getElementById('weather-info').innerHTML = 
+                    `${today}<br>${greeting}<br>Dublin weather today: ${weatherDescription}, ${temperature}°C.`;
+            })
+            .catch(error => {
+                document.getElementById('weather-info').innerText = "Could not fetch weather data.";
+                console.error("Error fetching weather data:", error);
+            });
+    
+        // Reload the page every 2 hours (7200000 milliseconds)
+        setTimeout(() => {
+            location.reload();
+        }, 7200000); // 2 hours in milliseconds
+    </script>
+    
+    <script>
+        let previousRate = null;
+    
+        async function fetchConversionRate() {
+            const apiKey = 'ea4d7c0a6a-b37a96280b-sm7ojl'; // Your actual API key
+            const url = `https://api.fastforex.io/fetch-one?from=EUR&to=BRL&api_key=${apiKey}`;
+    
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    console.error('Response status:', response.status);
+                    console.error('Response text:', await response.text());
+                    throw new Error('Network response was not ok.');
+                }
+                const data = await response.json();
+                console.log('API Response:', data); // Log the entire response for debugging
+    
+                // Access the conversion rate from the correct property
+                if (data.result && data.result.BRL) {
+                    const rate = Math.floor(data.result.BRL * 100) / 100; // Truncate to two decimal places
+    
+                    // Prepare the conversion rate text with the trend symbol
+                    let trendSymbol = '📈'; // Initial value
+                    let lastTrendSymbol = ''; // Store the last trend symbol
+
+                    if (previousRate !== null) {
+                        if (rate > previousRate) {
+                            trendSymbol = ' 📈'; // Up arrow symbol
+                            lastTrendSymbol = trendSymbol; // Update last trend symbol
+                        } else if (rate < previousRate) {
+                            trendSymbol = ' 📉'; // Down arrow symbol
+                            lastTrendSymbol = trendSymbol; // Update last trend symbol
+                        } else {
+                            console.log("No change in rate");
+                            trendSymbol = lastTrendSymbol; // Keep the last trend symbol
+                        }
+                    }
+
+                    // Use trendSymbol as needed
+
+    
+                    // Update the conversion rate and include the trend symbol
+                    document.getElementById('conversionRate').textContent = `1€ = ${rate} BRL${trendSymbol}`;
+    
+                    // Update previous rate
+                    previousRate = rate;
+                } else {
+                    console.error('Unexpected response structure:', data);
+                    document.getElementById('conversionRate').textContent = 'Invalid response format.';
+                }
+    
+            } catch (error) {
+                console.error('Error fetching the conversion rate:', error);
+                document.getElementById('conversionRate').textContent = 'Error fetching conversion rate.';
+            }
+        }
+    
+        // Fetch conversion rate every 2 minutes (120000 milliseconds)
+        setInterval(fetchConversionRate, 120000);
+        fetchConversionRate(); // Initial call
+    </script>
+    
+
+    
+    
+</body>
+</html>
