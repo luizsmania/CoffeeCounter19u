@@ -9,8 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton+SC&family=Bona+Nova+SC:ital,wght@0,400;0,700;1,400&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
 </head>
 <body>
+
     <div class="api_info">
         <p id="weather-info">Loading weather...</p>
         <div id="conversionRate">Fetching conversion rate...</div><div id="trendSymbol"></div>
@@ -63,8 +65,6 @@
 	<button class="button extra" onclick="selectOption('Decaff', 'extra', this)">Decaff</button>
        
         <div class="controls">
-            <button class="button full-width" onclick="exportData()">Export Data</button>
-            <button class="button full-width" onclick="confirmResetDay()">Reset All Data</button>
         </div>
         <p class="copyright">&copy; 2024 Luiz Smania (@luizsmania). All rights reserved.<br>This website is for personal use only and may not be used for commercial purposes, sales, or redistribution without explicit permission.</p>
     </div>
@@ -75,11 +75,16 @@
             <!-- Options will be populated here -->
         </select>
         <p id="oldListMessage" class="oldListMessage" style="color: red; display: none;">Looks like you're checking out yesterday's coffee run. Switch to today's date to see the fresh brew!</p>
-        <button class="button full-width" onclick="addCoffee()">Enter</button>
+        <button id="added" class="button full-width" onclick="addCoffee()">Enter</button>
         <h2 id="coffeeCount">Recent Coffees - Total: 0</h2>
         <ul id="coffeeList"></ul>
     </div>
-    <script src="app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js"></script>
+    
+    <script type="module" src="firebase.js"></script>
+
+
 
     
    <script>

@@ -6,6 +6,7 @@ let selectedExtra = '';
 let coffeeList = [];
 let selectedDate = getFormattedDate(new Date()); // Initialize selectedDate to today’s date
 
+
 // Load the saved coffee list for the current day when the page is loaded
 window.onload = function() {
     // Load the saved coffee list for the current day
@@ -335,63 +336,6 @@ function selectOption(option, category, buttonElement) {
 }
 
 
-
-function exportData() {
-    let coffeeCount = {};
-    let milkCount = {};
-    let syrupCount = {};
-    let extraCount = {};
-
-    coffeeList.forEach(function(row) {
-        if (row.coffee !== 'No Coffee Selected') {
-            coffeeCount[row.coffee] = (coffeeCount[row.coffee] || 0) + 1;
-        }
-        if (row.milk !== 'Regular Milk') {
-            milkCount[row.milk] = (milkCount[row.milk] || 0) + 1;
-        }
-        if (row.syrup !== 'No Syrup') {
-            syrupCount[row.syrup] = (syrupCount[row.syrup] || 0) + 1;
-        }
-        if (row.extra !== 'No Extra') {
-            extraCount[row.extra] = (extraCount[row.extra] || 0) + 1;
-        }
-    });
-
-    let csvContent = "data:text/csv;charset=utf-8,Coffee - Count\n";
-    for (const coffee in coffeeCount) {
-        csvContent += `${coffee}=${coffeeCount[coffee]}\n`;
-    }
-
-    csvContent += "\nMilk - Count\n";
-    for (const milk in milkCount) {
-        csvContent += `${milk}=${milkCount[milk]}\n`;
-    }
-
-    csvContent += "\nSyrup - Count\n";
-    for (const syrup in syrupCount) {
-        csvContent += `${syrup}=${syrupCount[syrup]}\n`;
-    }
-
-    csvContent += "\nExtra - Count\n";
-    for (const extra in extraCount) {
-        csvContent += `${extra}=${extraCount[extra]}\n`;
-    }
-
-    // Get the selected date from the dropdown
-    const selectedDate = document.getElementById('dateDropdown').value; // Get selected date
-    const formattedDate = selectedDate.replace(/-/g, '/'); // Change format to DD/MM/YYYY or keep it as is based on your needs
-
-    // Create the filename with the formatted date
-    const filename = `${formattedDate} Coffee Log.csv`;
-
-    // Encode CSV content and trigger download
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", filename); // Use the generated filename
-    document.body.appendChild(link);
-    link.click();
-}
 
 
 
