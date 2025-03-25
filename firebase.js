@@ -97,30 +97,24 @@ function scheduleExportData() {
 
   let nextRunTime;
 
-  if (currentHour < startHour) {
-      nextRunTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHour, 0, 0, 0);
-  } else if (currentHour >= endHour) {
+  if (currentHour < startHour || (currentHour === startHour && currentMinute < 15)) {
+      // If before start time or before 7:15, schedule for 7:15
+      nextRunTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHour, 15, 0, 0);
+  } else if (currentHour >= endHour && currentMinute >= 15) {
+      // If after last scheduled time (17:15), schedule for next day's 7:15
       const tomorrow = new Date(now);
       tomorrow.setDate(now.getDate() + 1);
-      nextRunTime = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), startHour, 0, 0, 0);
+      nextRunTime = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), startHour, 15, 0, 0);
   } else {
-      const minutesSinceStart = (currentHour - startHour) * 60 + currentMinute;
-      const nextRunMinutes = Math.ceil(minutesSinceStart / 30) * 30;
-      const nextRunHour = startHour + Math.floor(nextRunMinutes / 60);
-      const nextRunMinute = nextRunMinutes % 60;
-      nextRunTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextRunHour, nextRunMinute, 0, 0);
-      if(nextRunTime.getHours() >= endHour){
-          const tomorrow = new Date(now);
-          tomorrow.setDate(now.getDate() + 1);
-          nextRunTime = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), startHour, 0, 0, 0);
-      }
+      // Schedule for the next hour's 15th minute
+      nextRunTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), currentHour + 1, 15, 0, 0);
   }
 
   const delay = nextRunTime - now;
 
   setTimeout(() => {
       exportData();
-      scheduleExportData();
+      scheduleExportData(); // Re-run function for next scheduled time
   }, delay);
 
   console.log("Next exportData scheduled for:", nextRunTime);
