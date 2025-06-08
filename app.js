@@ -342,16 +342,17 @@ function restoreCategoryButtons(cat) {
     const hdr = findCategoryHeader(cat);
     if (hdr) hdr.style.display = 'block';
 }
-function showRemoveButton(cat) {
+function showRemoveButton(cat, label) {
     const id = `remove-${cat}-btn`;
     if (document.getElementById(id)) return;
 
     const btn = document.createElement('button');
     btn.id = id;
-    btn.textContent = `Deselect ${cat.charAt(0).toUpperCase() + cat.slice(1)}`;
-    btn.className = 'button full-width';
+    btn.textContent = label;
+    btn.className = 'button full-width selected'; // preserve selected look
     btn.style.marginTop = '10px';
     btn.style.zIndex = '999';
+
     btn.onclick = () => {
         restoreCategoryButtons(cat);
         btn.remove();
@@ -364,7 +365,7 @@ function showRemoveButton(cat) {
 
     const order = ['coffee', 'milk', 'syrup', 'extra'];
     const container = document.querySelector('.options');
-    
+
     // Find the last existing remove button in correct order
     let lastExisting = null;
     for (const c of order) {
@@ -376,7 +377,6 @@ function showRemoveButton(cat) {
     if (lastExisting) {
         lastExisting.insertAdjacentElement('afterend', btn);
     } else {
-        // If none exists yet, insert after the .header div
         const header = container.querySelector('.header');
         header.insertAdjacentElement('afterend', btn);
     }
@@ -391,19 +391,19 @@ function selectOption(value, category, button) {
     if (category === 'coffee') {
         selectedCoffee = value;
         hideCategoryButtons('coffee');
-        showRemoveButton('coffee');
+        showRemoveButton('coffee', value);
     } else if (category === 'milk') {
         selectedMilk = value;
         hideCategoryButtons('milk');
-        showRemoveButton('milk');
+        showRemoveButton('milk', value);
     } else if (category === 'syrup') {
         selectedSyrup = value;
         hideCategoryButtons('syrup');
-        showRemoveButton('syrup');
+        showRemoveButton('syrup', value);
     } else if (category === 'extra') {
         selectedExtra = value;
         hideCategoryButtons('extra');
-        showRemoveButton('extra');
+        showRemoveButton('extra', value);
     }
 }
 
